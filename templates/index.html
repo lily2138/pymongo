@@ -1,0 +1,21 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        function check() {
+            $.ajax({
+                type: "POST",
+                url: "/new",
+                data: { rank_give:'99', star_give:'8.6', title_give:'청년경찰' },
+                success: function(response){
+                    console.log(response)
+                }
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <button onclick="check()">123!!</button>
+</body>
+</html>
