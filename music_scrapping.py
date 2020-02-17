@@ -21,7 +21,9 @@ musics = soup.select('#body-content > div.newest-list > div > table > tbody > tr
 rank = 1
 
 for music in musics:
-    image = str(music.select_one('img').attrs['src']).replace('//','')
+
+    image = 'https:' + str(music.select_one('img').attrs['src'])
+    #image = str(music.select_one('img').attrs['src']).replace('//','')
     #print(image)
     title = music.select_one('td.info > a.title.ellipsis').text.strip()
     #print(title)
@@ -35,5 +37,5 @@ for music in musics:
         'artist': artist
     }
 
-    db.music190411.insert_one(music_data)
+    db.musics.insert_one(music_data)
     rank += 1

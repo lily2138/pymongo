@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+	<!-- Webpage Title -->
+	<title>시계를 팝니다</title>
+
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+	<!-- JS -->		
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+	<!-- 구글폰트 -->
+	<link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+	<link href="https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+	<style type="text/css">
+
+		.wrap {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.card_style{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+
+
+		.card_title{
+			font-family: 'Stylish', sans-serif;
+			text-align: center;
+		}
+
+		.price_text{
+			color:green;
+			font-weight: bold;
+			text-align: center;
+			font-size:19px;
+		}
+
+		.card_detail{
+			text-align: center;
+			font-size: 15px;
+		}
+
+		.card_detail2{
+			color: red;
+			font-style: italic;
+			font-size: 13px;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		.content_font_style{
+			font-weight: 600;
+			font-family: 'Do Hyeon', sans-serif;
+		}
+
+		.btn_center{
+			text-align: center;
+			font-family: 'Do Hyeon', sans-serif;
+
+		}
+
+		.table{
+			text-align: center;
+		}
+
+
+	</style>
+
+	<!-- JQuery를 import 합니다 -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	<script>
+		function order(){
+
+			let name = $('#input_name').val();
+			let count = $('#input_count').val();
+			let address = $('#input_address').val();
+			let phone = $('#input_phone').val();
+
+			let regExp = /^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$/;
+			
+
+			if(name==''){
+				alert('이름을 입력하세요!');
+				$('#input_name').focus();
+				return false;
+			}else if(count=='--- 수량을 선택하세요 ---'){
+				alert('수량을 입력하세요!');
+				$('#input_count').focus();
+				return false;
+			}else if(address==''){
+				alert('주소를 입력하세요!');
+				$('#input_address').focus();
+				return false;
+			}else if(phone==''){
+				alert('핸드폰번호를 입력하세요!');
+				$('#input_phone').focus();
+				return false;
+			}else if (!regExp.test(phone)) {
+				alert('핸드폰번호는 000-0000-000 로 입력해주세요');
+				return;
+			}
+
+			posting(name,count,address,phone);
+			
+		}
+
+		function posting(name,count,address,phone) {
+	      // 읽기
+	      // let name = $('#input_name').val();
+	      // let count = $('#input_count').val();
+	      // let address = $('#input_address').val();
+	      // let phone = $('#input_phone').val();
+
+	      // 우리가 크롬 콘솔창에서 썼던 그 코드!
+	      $.ajax({
+		        type: "POST", // POST 방식으로 요청하겠다.
+		        url: "/order", // /post라는 url에 요청하겠다.
+		        data: { name_give: name, count_give: count, address_give: address, phone_give: phone }, // 데이터를 주는 방법
+		        success: function(response){ // 성공하면
+		        	if (response['result'] == 'success') {
+		        		alert('주문완료!');
+		        		window.location.reload();//페이지 리로드
+		        	} else {
+		        		alert('서버 오류!')
+		        	}
+		        }
+		    })
+	  }
+		// 페이지를 열면, 새로고침 하면, 
+		$(document).ready(function(){
+			//$('#order_check').html('');
+			listing();
+		});
+
+		function listing() {
+			$.ajax({
+				type: "GET",
+				url: "/order",
+				data: {},
+				success: function(response){
+					if (response['result'] == 'success') {
+						let orders = response['orders'];
+						for (let i = 0; i < orders.length; i++) {
+							add_table(orders[i]['name'],orders[i]['count'],orders[i]['address'],orders[i]['phone'])
+						}
+					} else {
+						alert('주문을 받아오지 못했습니다');
+					}
+				}
+			})
+		}
+
+
+
+		function add_table(name,count,address,phone){
+
+  	// let name = $('#input_name').val();
+  	// let count = $('#input_count').val();
+  	// let address = $('#input_address').val();
+  	// let phone = $('#input_phone').val();
+
+  	let temp_html = '<tr>'+'<td>' + name + '</td>'+'<td>' +count + '</td>'+'<td>' + address + '</td>'+'<td>' + phone +'</td>'+'</tr>';
+  	$('#order_check').append(temp_html);
+
+  }
+
+</script>
+
+</head>
+
+
+<body>
+	<div class="wrap">
+		<div class="card card_style" style="width: 800px;">
+			<img class="card-img-top" src="static/images/clock.png" alt="Card image cap">
+			<div class="card-body">
+				<h1 class="card_title">Time Machine Watch</h1>
+				<p class="price_text">가격:60000원/개</p>
+				<p class="card-text card_detail">이 시계는 당신이 돌아가고 싶은 시각을 맞추면 그 시각으로 돌아가게 됩니다.<br><span class= "card_detail2">(단, 24시간 내의 시각으로만 맞춤 가능)</span> </p>
+
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text content_font_style" id="inputGroup-sizing-default">주문자이름</span>
+					</div>
+					<input id="input_name" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+				</div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text content_font_style" id="inputGroup-sizing-default">수량</span>
+					</div>
+					<select id="input_count" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+						<option selected>--- 수량을 선택하세요 ---</option>
+						<option>1개</option>
+						<option>2개</option>
+						<option>3개</option>
+						<option>4개</option>
+					</select>
+				</div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text content_font_style" id="inputGroup-sizing-default">주소</span>
+					</div>
+					<input id="input_address" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+				</div>
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text content_font_style" id="inputGroup-sizing-default">전화번호</span>
+					</div>
+					<input id="input_phone" type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+				</div>
+				<br>
+				<div class="btn_center">
+					<button type="button" onclick="order()" class="btn btn-primary">주문하기</button>
+				</div>
+			</div>
+		</div>
+
+		<br>
+
+		<div class="check">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">이름</th>
+						<th scope="col">수량</th>
+						<th scope="col">주소</th>
+						<th scope="col">전화번호</th>
+					</tr>
+				</thead>
+				<tbody id = "order_check">
+					<tr><td>(예)하경</td><td>4개</td><td>서울</td><td>010-4171-6131</td></tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+
+</html>

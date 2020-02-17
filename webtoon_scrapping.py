@@ -39,8 +39,8 @@ for week_webtoon in webtoons:
         'sun': sun
     }
 #content > div.list_area.daily_all > div:nth-child(1) > div > ul > li:nth-child(1) > a
-for day_webtoon in week_data:
-    title = day_webtoon.select_one('div > ul > li:nth-child(1) > a')
+    for day_webtoon in week_data:
+        title = day_webtoon.select_one('div > ul > li:nth-child(1) > a')
 
-    db.webtoons.insert_one(title)
-    #rank += 1
+        db.webtoons.insert_one(title)
+        #rank += 1
